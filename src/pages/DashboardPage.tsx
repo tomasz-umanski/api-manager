@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { CheckCircle2, Clock3, FileDiff, Loader2, Play, ShieldAlert } from 'lucide-react'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, MethodChip, StatusBadge } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
-import { formatDateTime, timeAgo } from '../../lib/format'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, MethodChip, StatusBadge } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
+import { formatDateTime, timeAgo } from '../lib/format'
 
 export function DashboardPage() {
   const { contracts, activity, validateContract, loadingContractIds } = useAppStore()

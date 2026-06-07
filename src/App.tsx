@@ -1,13 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
-import { AuthPage } from './features/auth/AuthPage'
-import { ContractDetailsPage } from './features/contracts/ContractDetailsPage'
-import { ContractsPage } from './features/contracts/ContractsPage'
-import { DashboardPage } from './features/dashboard/DashboardPage'
-import { DiffViewerPage } from './features/diff-viewer/DiffViewerPage'
-import { NewContractPage } from './features/registration/NewContractPage'
-import { SettingsPage } from './features/settings/SettingsPage'
+import { AuthPage } from './pages/AuthPage'
+import { ContractDetailsPage } from './pages/ContractDetailsPage'
+import { ContractsPage } from './pages/ContractsPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { DiffViewerPage } from './pages/DiffViewerPage'
+import { NewContractPage } from './pages/NewContractPage'
+import { SettingsPage } from './pages/SettingsPage'
 
 export function App() {
   return (

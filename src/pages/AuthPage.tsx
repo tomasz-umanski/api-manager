@@ -1,8 +1,8 @@
 import { Eye, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Button, TextInput } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
+import { Button, TextInput } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
 
 export function AuthPage() {
   const { loginUser } = useAppStore()

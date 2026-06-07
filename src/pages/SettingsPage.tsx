@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react'
 import { Bell, Check, Database, KeyRound, Loader2, Save, Shield, SlidersHorizontal, UserRound } from 'lucide-react'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, SelectInput, TextInput } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, SelectInput, TextInput } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
 
 export function SettingsPage() {
   const { user, contracts } = useAppStore()

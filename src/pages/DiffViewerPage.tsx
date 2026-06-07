@@ -1,11 +1,11 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Copy, Minus, Plus, TriangleAlert, Waves } from 'lucide-react'
 import clsx from 'clsx'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, CodePane, RiskBadge, SectionHeader } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
-import { formatDateTime } from '../../lib/format'
-import type { DiffRecord } from '../../types/domain'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, CodePane, RiskBadge, SectionHeader } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
+import { formatDateTime } from '../lib/format'
+import type { DiffRecord } from '../types/domain'
 
 export function DiffViewerPage() {
   const { contractId, runId } = useParams()
