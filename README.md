@@ -31,7 +31,9 @@ npm install
 cp .env.example .env
 ```
 
-Uzupełnij `.env` danymi z Firebase Console, Google Analytics i Hotjar (patrz sekcje poniżej).
+Uzupełnij `.env` danymi z Firebase Console, Google Analytics i Hotjar.
+
+> **Pełna instrukcja krok po kroku:** [docs/SETUP.md](docs/SETUP.md)
 
 ```bash
 npm run dev
