@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "start": "serve dist -s -l ${PORT:-4173}",
+    "preview:prod": "npm run build && npm run start"
   },
   "dependencies": {
     "@hotjar/browser": "^1.0.9",
@@ -37,6 +39,7 @@
     "globals": "latest",
     "jsdom": "latest",
     "postcss": "^8.5.15",
+    "serve": "^14.2.6",
     "tailwindcss": "^3.4.19",
     "typescript": "latest",
     "typescript-eslint": "latest",
