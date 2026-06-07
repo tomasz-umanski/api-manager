@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import Hotjar from '@hotjar/browser'
 import ReactGA from 'react-ga4'
 import { AnalyticsListener } from './components/AnalyticsListener'
 import { AppShell } from './components/layout/AppShell'
@@ -18,6 +19,12 @@ export function App() {
     const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
     if (measurementId) {
       ReactGA.initialize(measurementId)
+    }
+
+    const siteId = Number(import.meta.env.VITE_HOTJAR_SITE_ID)
+    const hotjarVersion = Number(import.meta.env.VITE_HOTJAR_VERSION ?? 6)
+    if (siteId) {
+      Hotjar.init(siteId, hotjarVersion)
     }
   }, [])
 
