@@ -298,6 +298,24 @@ Użyj tej listy przed oddaniem projektu:
 - Wszystkie `VITE_*` muszą być ustawione w Variables przed deployem
 - Po zmianie zmiennych zawsze uruchom ponowny deploy
 
+### Build Railway pada na wersji Node.js (`Vite requires Node.js version 20.19+`)
+
+Railway/Nixpacks domyślnie używa Node 18. Projekt wymaga **Node >= 20.19** (Vite).
+
+W repozytorium są już pliki wymuszające Node 22:
+
+- `.nvmrc`
+- `engines.node` w `package.json`
+- `nixpacks.toml`
+
+Jeśli build nadal używa Node 18, dodaj w Railway **Variables**:
+
+```env
+NIXPACKS_NODE_VERSION=22
+```
+
+i uruchom **Redeploy**.
+
 ---
 
 ## Szybki szablon `.env`
