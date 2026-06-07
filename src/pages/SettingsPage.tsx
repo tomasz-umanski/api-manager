@@ -137,7 +137,7 @@ export function SettingsPage() {
               <h2 className="font-bold text-white">Security</h2>
             </div>
             <div className="space-y-3 text-sm">
-              <Meta label="Auth Mode" value="Mock session" />
+              <Meta label="Auth Mode" value="Firebase Auth" />
               <Meta label="Webhook Display" value="Masked" tone="success" />
               <Meta label="Audit Logs" value="Planned" />
             </div>
