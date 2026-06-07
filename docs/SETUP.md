@@ -165,11 +165,21 @@ VITE_HOTJAR_VERSION=6
 
 > `VITE_HOTJAR_VERSION=6` to wersja biblioteki Hotjar — zostaw `6`, chyba że dokumentacja Hotjar wskaże inną.
 
-### 3.4 Weryfikacja
+### 3.4 Konfiguracja SPA (React Router)
+
+Aplikacja to SPA — po zalogowaniu URL zmienia się bez przeładowania strony. Hotjar musi dostać ręczne powiadomienia o zmianie trasy przez `Hotjar.stateChange()` w `AnalyticsListener`.
+
+W panelu Hotjar (**Site settings → Tracking code / URL changes**) ustaw śledzenie URL na:
+
+- **Track changes manually** (ręczne `stateChange`), albo
+- **Automatic** — jeśli weryfikacja nadal pada, przełącz na manual.
+
+### 3.5 Weryfikacja
 
 1. Wdróż aplikację lub uruchom lokalnie z ustawionym `VITE_HOTJAR_SITE_ID`
-2. Wejdź na stronę i wykonaj kilka akcji (kliknij menu, formularz logowania)
-3. W panelu Hotjar sprawdź:
+2. Wejdź na `/login`, zaloguj się i przeklikaj menu (Dashboard, Contracts, Settings)
+3. W panelu Hotjar sprawdź instalację na **kilku różnych ścieżkach**, nie tylko `/login`
+4. Sprawdź też:
    - **Recordings** — czy pojawiają się nagrania sesji
    - **Heatmaps** — po zebraniu wystarczającej liczby kliknięć
 
@@ -226,7 +236,7 @@ VITE_HOTJAR_VERSION=6
 ### 4.4 Wygeneruj publiczny URL
 
 1. **Settings → Networking → Generate Domain**
-2. Skopiuj URL, np. `https://api-manager-production.up.railway.app`
+2. Skopiuj URL, np. `https://api-manager-production-0456.up.railway.app/settings`
 
 ### 4.5 Dokończ konfigurację po deployu
 
@@ -287,6 +297,13 @@ Użyj tej listy przed oddaniem projektu:
 - Sprawdź, czy `VITE_HOTJAR_SITE_ID` to liczba (bez cudzysłowów w Railway)
 - Wyłącz adblocker podczas testów
 - Poczekaj kilka minut po pierwszej wizycie
+
+### Hotjar działa tylko na `/login`, błąd na innych podstronach
+
+- To typowy problem SPA — Hotjar widzi tylko pierwszy URL bez `stateChange`
+- Kod wysyła `Hotjar.stateChange()` przy każdej zmianie trasy w `AnalyticsListener`
+- W Hotjar Site settings włącz **Track changes manually**
+- Po deployu przetestuj: `/login` → zaloguj → `/contracts` → `/settings` i zweryfikuj każdą ścieżkę osobno
 
 ### Railway — biała strona lub 404 na podstronach
 

@@ -79,12 +79,14 @@ VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 npm install @hotjar/browser
 ```
 
-Inicjalizacja w `src/App.tsx`:
+Inicjalizacja w `src/App.tsx`, śledzenie zmian tras SPA w `src/components/AnalyticsListener.tsx` (`Hotjar.stateChange`):
 
 ```env
 VITE_HOTJAR_SITE_ID=123456
 VITE_HOTJAR_VERSION=6
 ```
+
+W panelu Hotjar ustaw **Track changes manually** (aplikacja to SPA).
 
 ## Deploy (Railway)
 
@@ -168,3 +170,10 @@ Po ustawieniu `VITE_HOTJAR_SITE_ID` Hotjar rejestruje zachowania użytkowników 
 | Google Analytics + listener tras SPA | ✅ |
 | Deploy (Railway + `npm run start`) | ✅ |
 | README ze screenami | ✅ |
+
+## Linki
+
+- deployment aplikacji: https://railway.com/project/6b4e6728-1e26-46b7-b0bf-dfbadd5771dc/service/c3c7772e-eed1-4ed5-a0b4-f2eefb4b4dee/variables?environmentId=e79de073-4a90-44dc-8e75-9357d9d861a2
+- hotjar: https://app.contentsquare.com/#/dashboards/e7fb570b-0a7b-40eb-b73c-cbd86263ba3e?project=864856&hash=73ae162bf9724b4c194e2e09b3b76107
+- analitycs: https://analytics.google.com/analytics/web/#/a397019903p540469431/reports/intelligenthome?params=_u..nav%3Dmaui
+- aplikacja: https://api-manager-production-0456.up.railway.app
