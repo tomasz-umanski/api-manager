@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { AuthPage } from './pages/AuthPage'
@@ -7,6 +7,7 @@ import { ContractsPage } from './pages/ContractsPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { DiffViewerPage } from './pages/DiffViewerPage'
 import { NewContractPage } from './pages/NewContractPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 import { SettingsPage } from './pages/SettingsPage'
 
 export function App() {
@@ -27,7 +28,7 @@ export function App() {
         <Route path="/diff/:contractId/:runId" element={<DiffViewerPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }
