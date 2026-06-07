@@ -1,0 +1,4 @@
+# Vite 8 requires Node >= 20.19. Railway/Nixpacks defaults to Node 18.
+# Do not pin nixpkgsArchive — it conflicts with newer Nixpacks (nodejs_24).
+[variables]
+NIXPACKS_NODE_VERSION = "22"

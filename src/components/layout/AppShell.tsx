@@ -56,8 +56,7 @@ export function AppShell() {
             variant="ghost"
             className="w-full justify-start"
             onClick={() => {
-              logoutUser()
-              navigate('/login')
+              void logoutUser().then(() => navigate('/login'))
             }}
           >
             <LogOut size={16} />

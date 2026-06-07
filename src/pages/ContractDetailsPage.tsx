@@ -1,10 +1,10 @@
 import { FormEvent, ReactNode, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Bell, FileDiff, Loader2, Play, Save } from 'lucide-react'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, CodePane, EmptyState, MethodChip, SectionHeader, StatusBadge, TextInput } from '../../components/ui'
-import { formatDateTime } from '../../lib/format'
-import { useAppStore } from '../../store/AppStore'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, CodePane, EmptyState, MethodChip, SectionHeader, StatusBadge, TextInput } from '../components/ui'
+import { formatDateTime } from '../lib/format'
+import { useAppStore } from '../store/AppStore'
 
 export function ContractDetailsPage() {
   const { contractId } = useParams()

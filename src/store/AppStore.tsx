@@ -1,18 +1,20 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, ReactNode, useContext, useState } from 'react'
-import { createContract, fetchContracts, login, runValidation, saveSlackWebhook } from '../services/mockApi'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { loginWithEmail, logout, subscribeToAuth } from '../services/authService'
+import { createContract, fetchContracts, runValidation, saveSlackWebhook } from '../services/mockApi'
 import { activityEvents, consumers, providers } from '../services/mockData'
 import type { ActivityEvent, Consumer, Contract, NewContractInput, Provider, User, ValidationRun } from '../types/domain'
 
 interface AppStore {
   user: User | null
+  authLoading: boolean
   contracts: Contract[]
   providers: Provider[]
   consumers: Consumer[]
   activity: ActivityEvent[]
   loadingContractIds: string[]
   loginUser: (email: string, password: string) => Promise<void>
-  logoutUser: () => void
+  logoutUser: () => Promise<void>
   bootstrap: () => Promise<void>
   validateContract: (contractId: string) => Promise<ValidationRun | null>
   addContract: (input: NewContractInput) => Promise<Contract>
@@ -22,13 +24,18 @@ interface AppStore {
 const AppStoreContext = createContext<AppStore | null>(null)
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = window.localStorage.getItem('api-manager:user')
-    return saved ? (JSON.parse(saved) as User) : null
-  })
+  const [user, setUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [contracts, setContracts] = useState<Contract[]>([])
   const [activity, setActivity] = useState<ActivityEvent[]>(activityEvents)
   const [loadingContractIds, setLoadingContractIds] = useState<string[]>([])
+
+  useEffect(() => {
+    return subscribeToAuth((nextUser) => {
+      setUser(nextUser)
+      setAuthLoading(false)
+    })
+  }, [])
 
   async function bootstrap() {
     if (contracts.length > 0) return
@@ -36,15 +43,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }
 
   async function loginUser(email: string, password: string) {
-    const nextUser = await login(email, password)
-    setUser(nextUser)
-    window.localStorage.setItem('api-manager:user', JSON.stringify(nextUser))
+    await loginWithEmail(email, password)
     await bootstrap()
   }
 
-  function logoutUser() {
-    setUser(null)
-    window.localStorage.removeItem('api-manager:user')
+  async function logoutUser() {
+    await logout()
+    setContracts([])
   }
 
   async function validateContract(contractId: string) {
@@ -113,6 +118,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const value: AppStore = {
     user,
+    authLoading,
     contracts,
     providers,
     consumers,

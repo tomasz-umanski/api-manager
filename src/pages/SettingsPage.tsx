@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react'
 import { Bell, Check, Database, KeyRound, Loader2, Save, Shield, SlidersHorizontal, UserRound } from 'lucide-react'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, SelectInput, TextInput } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, SelectInput, TextInput } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
 
 export function SettingsPage() {
   const { user, contracts } = useAppStore()
@@ -137,7 +137,7 @@ export function SettingsPage() {
               <h2 className="font-bold text-white">Security</h2>
             </div>
             <div className="space-y-3 text-sm">
-              <Meta label="Auth Mode" value="Mock session" />
+              <Meta label="Auth Mode" value="Firebase Auth" />
               <Meta label="Webhook Display" value="Masked" tone="success" />
               <Meta label="Audit Logs" value="Planned" />
             </div>

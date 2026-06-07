@@ -1,13 +1,7 @@
-import type { Contract, DiffRecord, NewContractInput, User, ValidationRun } from '../types/domain'
-import { consumers, initialContracts, mockUser, providers } from './mockData'
+import type { Contract, DiffRecord, NewContractInput, ValidationRun } from '../types/domain'
+import { consumers, initialContracts, providers } from './mockData'
 
 const delay = (ms = 300) => new Promise((resolve) => window.setTimeout(resolve, ms))
-
-export async function login(email: string, password: string): Promise<User> {
-  void password
-  await delay(250)
-  return { ...mockUser, email }
-}
 
 export async function fetchContracts(): Promise<Contract[]> {
   await delay(200)

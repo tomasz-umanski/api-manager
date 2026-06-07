@@ -2,10 +2,10 @@ import { FormEvent, ReactNode, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Check, FileJson, Link2, Loader2, PenLine, Upload } from 'lucide-react'
 import clsx from 'clsx'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, CodePane, SelectInput, SectionHeader, TextArea, TextInput } from '../../components/ui'
-import { useAppStore } from '../../store/AppStore'
-import type { SourceType } from '../../types/domain'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, CodePane, SelectInput, SectionHeader, TextArea, TextInput } from '../components/ui'
+import { useAppStore } from '../store/AppStore'
+import type { SourceType } from '../types/domain'
 
 const steps = ['Source', 'Schema', 'Consumers', 'Confirm'] as const
 

@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Filter, Loader2, Play, Search } from 'lucide-react'
-import { Page } from '../../components/layout/AppShell'
-import { Button, Card, MethodChip, SelectInput, StatusBadge, TextInput } from '../../components/ui'
-import { formatDateTime } from '../../lib/format'
-import { useAppStore } from '../../store/AppStore'
-import type { ContractStatus } from '../../types/domain'
+import { Page } from '../components/layout/AppShell'
+import { Button, Card, MethodChip, SelectInput, StatusBadge, TextInput } from '../components/ui'
+import { formatDateTime } from '../lib/format'
+import { useAppStore } from '../store/AppStore'
+import type { ContractStatus } from '../types/domain'
 
 export function ContractsPage() {
   const { contracts, loadingContractIds, validateContract } = useAppStore()
