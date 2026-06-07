@@ -24,7 +24,11 @@ let currentUser: User | null = null
 const subscribers: Array<(user: User | null) => void> = []
 
 vi.mock('@hotjar/browser', () => ({
-  default: { init: vi.fn() },
+  default: {
+    init: vi.fn(),
+    stateChange: vi.fn(),
+    isReady: vi.fn(() => true),
+  },
 }))
 
 vi.mock('react-ga4', () => ({
