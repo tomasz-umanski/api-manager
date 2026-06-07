@@ -4,23 +4,29 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 import { renderWithApp } from './test/render'
 
+async function signIn() {
+  await userEvent.type(screen.getByLabelText(/email address/i), 'admin@apicontrol.local')
+  await userEvent.type(screen.getByLabelText(/^password$/i), 'password123')
+  await userEvent.click(screen.getByRole('button', { name: /^sign in$/i }))
+}
+
 describe('Api Manager app', () => {
   beforeEach(() => {
     window.localStorage.clear()
   })
 
-  it('guards authenticated routes and allows mock login', async () => {
+  it('guards authenticated routes and allows login', async () => {
     renderWithApp(<App />, '/contracts')
 
     expect(await screen.findByRole('heading', { name: /sign in/i })).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: /^sign in$/i }))
+    await signIn()
 
     expect(await screen.findByRole('heading', { name: /api contracts/i })).toBeInTheDocument()
   })
 
   it('navigates to diff viewer when a violated contract is validated', async () => {
     renderWithApp(<App />, '/login')
-    await userEvent.click(await screen.findByRole('button', { name: /^sign in$/i }))
+    await signIn()
 
     const billingRowButton = await screen.findAllByRole('button', { name: /validate/i })
     await userEvent.click(billingRowButton[0])
@@ -31,7 +37,7 @@ describe('Api Manager app', () => {
 
   it('validates the new contract wizard required fields', async () => {
     renderWithApp(<App />, '/login')
-    await userEvent.click(await screen.findByRole('button', { name: /^sign in$/i }))
+    await signIn()
     const newContractLinks = await screen.findAllByRole('link', { name: /new contract/i })
     await userEvent.click(newContractLinks[0])
 
