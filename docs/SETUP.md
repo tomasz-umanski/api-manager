@@ -304,9 +304,9 @@ Railway/Nixpacks domyślnie używa Node 18. Projekt wymaga **Node >= 20.19** (Vi
 
 W repozytorium są już pliki wymuszające Node 22:
 
-- `.nvmrc`
-- `engines.node` w `package.json`
-- `nixpacks.toml`
+- `.nvmrc` → `22`
+- `engines.node` w `package.json` → `22.x`
+- `nixpacks.toml` → `NIXPACKS_NODE_VERSION = "22"`
 
 Jeśli build nadal używa Node 18, dodaj w Railway **Variables**:
 
@@ -315,6 +315,12 @@ NIXPACKS_NODE_VERSION=22
 ```
 
 i uruchom **Redeploy**.
+
+### Build Railway pada na `undefined variable 'nodejs_24'`
+
+Ten błąd pojawia się, gdy w `nixpacks.toml` jest ustawiony stary `nixpkgsArchive`, a Railway próbuje użyć Node 24. **Nie pinuj archiwum nixpkgs** — wystarczy `NIXPACKS_NODE_VERSION=22`.
+
+Sprawdź też w Railway Variables, czy nie masz przypadkiem `NIXPACKS_NODE_VERSION=24` — usuń lub zmień na `22`.
 
 ---
 

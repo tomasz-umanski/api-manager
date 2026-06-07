@@ -1,4 +1,4 @@
-# Railway/Nixpacks defaults to Node 18; Vite requires Node >= 20.19.
-# This archive provides Node.js 22.13.1.
-[phases.setup]
-nixpkgsArchive = '51ad838b03a05b1de6f9f2a0fffecee64a9788ee'
+# Vite 8 requires Node >= 20.19. Railway/Nixpacks defaults to Node 18.
+# Do not pin nixpkgsArchive — it conflicts with newer Nixpacks (nodejs_24).
+[variables]
+NIXPACKS_NODE_VERSION = "22"
