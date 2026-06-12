@@ -1,55 +1,138 @@
-# Instrukcja konfiguracji — API Manager
+# Instrukcja konfiguracji i uruchomienia
 
-Kod integracji (Firebase, GA4, Hotjar, deploy) jest już w repozytorium. Aby projekt działał **produkcyjnie i spełniał wymagania checklisty**, trzeba ręcznie skonfigurować usługi zewnętrzne i uzupełnić zmienne środowiskowe.
+Dokument opisuje wymagane kroki konfiguracji projektu **API Manager**. Integracja z usługami zewnętrznymi jest zaimplementowana w kodzie; poniższe czynności polegają na utworzeniu kont w odpowiednich serwisach i uzupełnieniu zmiennych środowiskowych.
 
-## Co jest już zrobione w kodzie
-
-| Element | Status w repozytorium |
-|---------|----------------------|
-| Firebase Auth (`signIn`, `signOut`, rejestracja) | ✅ `src/lib/firebase.ts`, `src/services/authService.ts` |
-| Chronione trasy | ✅ `src/components/layout/ProtectedRoute.tsx` |
-| Google Analytics 4 | ✅ `src/App.tsx` + `src/components/AnalyticsListener.tsx` |
-| Hotjar | ✅ `src/App.tsx` |
-| Deploy Railway | ✅ `railway.json`, `npm run start` |
-| Szablon zmiennych | ✅ `.env.example` |
-
-## Co pozostaje do zrobienia (ręcznie)
-
-1. Utworzyć projekt **Firebase** i włączyć logowanie Email/Password.
-2. Utworzyć strumień danych **Google Analytics 4** i skopiować Measurement ID.
-3. Utworzyć witrynę **Hotjar** i skopiować Site ID.
-4. Utworzyć plik `.env` lokalnie i ustawić te same zmienne na **Railway**.
-5. Wdrożyć aplikację i dodać domenę produkcyjną w Firebase.
-6. Zweryfikować działanie i zrobić **prawdziwe screeny** z paneli GA/Hotjar do README.
+**Powiązane dokumenty:** [README.md](../README.md) · [SPECIFICATION.md](SPECIFICATION.md) · [SUMMARY.md](SUMMARY.md)
 
 ---
 
-## Krok 0 — Przygotowanie lokalne
+## Spis treści
+
+1. [Wymagania wstępne](#1-wymagania-wstępne)
+2. [Przegląd konfiguracji](#2-przegląd-konfiguracji)
+3. [Środowisko lokalne](#3-środowisko-lokalne)
+4. [Firebase Authentication](#4-firebase-authentication)
+5. [Google Analytics 4](#5-google-analytics-4)
+6. [Hotjar](#6-hotjar)
+7. [Wdrożenie na Railway](#7-wdrożenie-na-railway)
+
+---
+
+## 1. Wymagania wstępne
+
+| Wymaganie | Wersja / uwagi |
+|-----------|----------------|
+| Node.js | **22.x** (pliki `.nvmrc`, `engines` w `package.json`) |
+| npm | dowolna wersja kompatybilna z Node 22 |
+| Konto Firebase | [Firebase Console](https://console.firebase.google.com/) |
+| Konto Google Analytics | [Google Analytics](https://analytics.google.com/) |
+| Konto Hotjar | [Hotjar](https://www.hotjar.com/) |
+| Konto Railway | [Railway](https://railway.com/) — do wdrożenia produkcyjnego |
+
+---
+
+## 2. Przegląd konfiguracji
+
+### Stan integracji w repozytorium
+
+| Usługa | Implementacja | Konfiguracja |
+|--------|---------------|--------------|
+| Firebase Authentication | `src/lib/firebase.ts`, `src/services/authService.ts` | zmienne `VITE_FIREBASE_*` |
+| Chronione trasy | `src/components/layout/ProtectedRoute.tsx` | wymaga Firebase |
+| Google Analytics 4 | `react-ga4` w `src/App.tsx`, `src/components/AnalyticsListener.tsx` | `VITE_GA_MEASUREMENT_ID` |
+| Hotjar | `@hotjar/browser` w `src/App.tsx`, `AnalyticsListener` | `VITE_HOTJAR_SITE_ID`, `VITE_HOTJAR_VERSION` |
+| Deploy | `railway.json`, `nixpacks.toml` | zmienne środowiskowe w Railway |
+
+### Wymagane czynności konfiguracyjne
+
+1. Utworzenie projektu Firebase i włączenie logowania Email/Password.
+2. Utworzenie właściwości GA4 i strumienia danych Web.
+3. Utworzenie witryny Hotjar.
+4. Uzupełnienie pliku `.env` lokalnie oraz zmiennych w Railway.
+5. Wdrożenie aplikacji i dodanie domeny produkcyjnej w Firebase.
+6. Weryfikacja działania usług oraz aktualizacja zrzutów ekranu w dokumentacji.
+
+### Zmienne środowiskowe
+
+Szablon: `.env.example`. Wszystkie zmienne `VITE_*` są wstawiane przez Vite w czasie **buildu** — po ich zmianie na Railway wymagany jest ponowny deploy.
+
+```env
+# Firebase
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+
+# Google Analytics 4
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# Hotjar
+VITE_HOTJAR_SITE_ID=
+VITE_HOTJAR_VERSION=6
+```
+
+> **Tryb deweloperski bez Firebase:** gdy `VITE_FIREBASE_API_KEY` nie jest ustawione, aplikacja uruchamia mockowe logowanie (dowolny email i hasło). Do wdrożenia produkcyjnego i oddania projektu wymagana jest pełna konfiguracja Firebase.
+
+---
+
+## 3. Środowisko lokalne
+
+### 3.1 Klonowanie repozytorium
+
+```bash
+git clone https://github.com/tomasz-umanski/api-manager.git
+cd api-manager
+```
+
+### 3.2 Instalacja zależności
 
 ```bash
 npm install
+```
+
+### 3.3 Plik środowiskowy
+
+```bash
 cp .env.example .env
 ```
 
-Plik `.env` **nie commituj** do repozytorium (jest w `.gitignore`).
+Plik `.env` nie jest commitowany do repozytorium (wpis w `.gitignore`). Uzupełnij zmienne zgodnie z sekcjami 4–6.
 
-> **Uwaga:** Bez `VITE_FIREBASE_API_KEY` aplikacja uruchamia tryb deweloperski z mockowym logowaniem (dowolny email/hasło). Do oddania laboratorium i produkcji **musisz** skonfigurować prawdziwe Firebase.
+### 3.4 Uruchomienie serwera deweloperskiego
+
+```bash
+npm run dev
+```
+
+Aplikacja dostępna pod adresem: **http://localhost:5173/**
+
+### 3.5 Pozostałe polecenia
+
+| Polecenie | Opis |
+|-----------|------|
+| `npm run build` | Build produkcyjny (TypeScript + Vite) |
+| `npm run start` | Serwowanie katalogu `dist/` |
+| `npm run preview:prod` | Build i uruchomienie lokalne (symulacja produkcji) |
+| `npm test` | Testy jednostkowe (Vitest) |
+| `npm run lint` | Analiza statyczna (ESLint) |
 
 ---
 
-## Krok 1 — Firebase Authentication
+## 4. Firebase Authentication
 
-### 1.1 Utwórz projekt
+### 4.1 Utworzenie projektu
 
-1. Wejdź na [Firebase Console](https://console.firebase.google.com/).
-2. Kliknij **Add project** / **Dodaj projekt**.
-3. Podaj nazwę (np. `api-manager`) i dokończ kreator.
+1. Otwórz [Firebase Console](https://console.firebase.google.com/).
+2. Wybierz **Add project** i podaj nazwę projektu (np. `api-manager`).
+3. Dokończ kreator tworzenia projektu.
 
-### 1.2 Dodaj aplikację webową
+### 4.2 Rejestracja aplikacji webowej
 
-1. W projekcie kliknij ikonę **Web** (`</>`).
+1. W panelu projektu wybierz ikonę **Web** (`</>`).
 2. Zarejestruj aplikację (np. `api-manager-web`).
-3. Skopiuj obiekt `firebaseConfig` — potrzebujesz tych wartości:
+3. Skopiuj wartości z obiektu `firebaseConfig` i przenieś je do `.env`:
 
 | Firebase Console | Zmienna w `.env` |
 |------------------|------------------|
@@ -60,164 +143,150 @@ Plik `.env` **nie commituj** do repozytorium (jest w `.gitignore`).
 | `messagingSenderId` | `VITE_FIREBASE_MESSAGING_SENDER_ID` |
 | `appId` | `VITE_FIREBASE_APP_ID` |
 
-### 1.3 Włącz logowanie Email/Password
+### 4.3 Włączenie metody logowania
 
-1. **Build → Authentication → Get started**
-2. Zakładka **Sign-in method**
-3. Włącz **Email/Password** (pierwsza opcja, bez linków emailowych).
+1. Przejdź do **Build → Authentication → Get started**.
+2. Otwórz zakładkę **Sign-in method**.
+3. Włącz metodę **Email/Password** (pierwsza opcja, bez linków emailowych).
 
-### 1.4 Utwórz użytkownika testowego
+### 4.4 Utworzenie użytkownika
 
-Opcja A — w konsoli:
+**Opcja A — Firebase Console**
 
 1. **Authentication → Users → Add user**
-2. Podaj email i hasło (min. 6 znaków).
+2. Podaj adres email i hasło (minimum 6 znaków).
 
-Opcja B — w aplikacji:
+**Opcja B — aplikacja**
 
-1. Uruchom `npm run dev`
-2. Na `/login` użyj przycisku **Register new account**
+1. Uruchom `npm run dev`.
+2. Na trasie `/login` użyj przycisku **Register new account**.
 
-### 1.5 Autoryzowane domeny (ważne po deployu)
+### 4.5 Autoryzowane domeny
 
-1. **Authentication → Settings → Authorized domains**
-2. Domyślnie jest `localhost` — zostaw.
-3. **Po deployu na Railway** dodaj domenę produkcyjną, np.:
-   - `twoja-aplikacja.up.railway.app`
+1. Przejdź do **Authentication → Settings → Authorized domains**.
+2. Domena `localhost` jest dodawana domyślnie — pozostaw ją bez zmian.
+3. Po wdrożeniu na Railway dodaj domenę produkcyjną (np. `api-manager-production-0456.up.railway.app`).
 
-Bez tego logowanie na wdrożonej aplikacji zwróci błąd `auth/unauthorized-domain`.
+Bez dodania domeny produkcyjnej logowanie na wdrożonej aplikacji zwróci błąd `auth/unauthorized-domain`.
 
-### 1.6 Weryfikacja lokalna
+### 4.6 Weryfikacja
 
 ```bash
 npm run dev
 ```
 
-1. Otwórz `http://localhost:5173/login`
-2. Zaloguj się kontem z Firebase
-3. Sprawdź przekierowanie na dashboard i działanie **Logout**
+1. Otwórz `http://localhost:5173/login`.
+2. Zaloguj się kontem utworzonym w Firebase.
+3. Sprawdź przekierowanie na dashboard oraz działanie wylogowania z menu bocznego.
 
 ---
 
-## Krok 2 — Google Analytics 4
+## 5. Google Analytics 4
 
-### 2.1 Utwórz konto i właściwość
+### 5.1 Utworzenie właściwości
 
-1. Wejdź na [Google Analytics](https://analytics.google.com/).
-2. **Admin (koło zębate) → Create → Property**
+1. Otwórz [Google Analytics](https://analytics.google.com/).
+2. Przejdź do **Admin → Create → Property**.
 3. Utwórz właściwość (np. `API Manager`).
 
-### 2.2 Utwórz strumień danych Web
+### 5.2 Utworzenie strumienia danych Web
 
 1. **Admin → Data streams → Add stream → Web**
-2. Podaj URL:
+2. Podaj adres URL:
    - lokalnie: `http://localhost:5173`
-   - po deployu: dodaj drugi strumień lub zaktualizuj URL na domenę Railway
-3. Skopiuj **Measurement ID** w formacie `G-XXXXXXXXXX`
+   - po wdrożeniu: domenę Railway (osobny strumień lub aktualizacja istniejącego)
+3. Skopiuj **Measurement ID** w formacie `G-XXXXXXXXXX`.
 
-### 2.3 Ustaw zmienną środowiskową
+### 5.3 Konfiguracja w projekcie
+
+Ustaw zmienną w pliku `.env`:
 
 ```env
 VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-### 2.4 Jak działa śledzenie w aplikacji
+### 5.4 Działanie śledzenia w aplikacji SPA
 
-- `ReactGA.initialize()` uruchamia się w `src/App.tsx`
-- `AnalyticsListener` wysyła `pageview` przy każdej zmianie trasy React Router
-- Śledzone są m.in.: `/`, `/login`, `/contracts`, `/settings`, `/contracts/new`, `/diff/...`
+- Inicjalizacja: `ReactGA.initialize()` w `src/App.tsx`.
+- Przy każdej zmianie trasy React Router komponent `AnalyticsListener` wysyła event `pageview`.
+- Śledzone trasy obejmują m.in.: `/`, `/login`, `/contracts`, `/contracts/new`, `/settings`, `/diff/:contractId/:runId`.
 
-### 2.5 Weryfikacja
+### 5.5 Weryfikacja
 
-1. Uruchom aplikację z uzupełnionym `VITE_GA_MEASUREMENT_ID`
-2. Przeklikaj kilka podstron
-3. W GA4: **Reports → Realtime** — powinny pojawić się aktywni użytkownicy i pageview
-4. **DebugView** (opcjonalnie): włącz w rozszerzeniu [Google Analytics Debugger](https://chrome.google.com/webstore) w Chrome
-
-### 2.6 Screen do dokumentacji
-
-Zrób zrzut ekranu z **Reports → Realtime** lub **Engagement → Pages and screens** i podmień plik:
-
-```text
-docs/screenshots/google-analytics.png
-```
+1. Uruchom aplikację z uzupełnioną zmienną `VITE_GA_MEASUREMENT_ID`.
+2. Przejdź przez kilka podstron aplikacji.
+3. W panelu GA4 otwórz **Reports → Realtime** — powinny pojawić się aktywni użytkownicy i odsłony stron.
 
 ---
 
-## Krok 3 — Hotjar
+## 6. Hotjar
 
-### 3.1 Utwórz konto i witrynę
+### 6.1 Utworzenie witryny
 
-1. Wejdź na [Hotjar](https://www.hotjar.com/) i załóż konto.
-2. **Add new site** — podaj URL wdrożonej aplikacji (Hotjar najlepiej działa na publicznym HTTPS, nie na localhost).
+1. Otwórz [Hotjar](https://www.hotjar.com/) i utwórz konto.
+2. Wybierz **Add new site** i podaj URL wdrożonej aplikacji.
 
-### 3.2 Pobierz Site ID
+> Hotjar wymaga publicznego adresu HTTPS. Śledzenie na `localhost` może być ograniczone — pełna weryfikacja przeprowadzana jest po wdrożeniu na Railway.
 
-1. **Site settings** (ustawienia witryny)
-2. Znajdź **Site ID** (liczba, np. `3847291`)
+### 6.2 Pobranie identyfikatora witryny
 
-### 3.3 Ustaw zmienne środowiskowe
+1. Przejdź do **Site settings**.
+2. Skopiuj **Site ID** (liczba całkowita).
+
+### 6.3 Konfiguracja w projekcie
+
+Ustaw zmienne w pliku `.env`:
 
 ```env
-VITE_HOTJAR_SITE_ID=3847291
+VITE_HOTJAR_SITE_ID=1234567
 VITE_HOTJAR_VERSION=6
 ```
 
-> `VITE_HOTJAR_VERSION=6` to wersja biblioteki Hotjar — zostaw `6`, chyba że dokumentacja Hotjar wskaże inną.
+### 6.4 Konfiguracja aplikacji SPA
 
-### 3.4 Konfiguracja SPA (React Router)
+Aplikacja korzysta z React Router — zmiana trasy nie powoduje przeładowania strony. Przy każdej nawigacji `AnalyticsListener` wywołuje `Hotjar.stateChange(path)`.
 
-Aplikacja to SPA — po zalogowaniu URL zmienia się bez przeładowania strony. Hotjar musi dostać ręczne powiadomienia o zmianie trasy przez `Hotjar.stateChange()` w `AnalyticsListener`.
+W panelu Hotjar (**Site settings → Tracking code / URL changes**) ustaw śledzenie zmian adresu URL na:
 
-W panelu Hotjar (**Site settings → Tracking code / URL changes**) ustaw śledzenie URL na:
+- **Track changes manually** (zalecane), lub
+- **Automatic** — jeśli weryfikacja nie przechodzi, przełącz na tryb manualny.
 
-- **Track changes manually** (ręczne `stateChange`), albo
-- **Automatic** — jeśli weryfikacja nadal pada, przełącz na manual.
+### 6.5 Weryfikacja
 
-### 3.5 Weryfikacja
-
-1. Wdróż aplikację lub uruchom lokalnie z ustawionym `VITE_HOTJAR_SITE_ID`
-2. Wejdź na `/login`, zaloguj się i przeklikaj menu (Dashboard, Contracts, Settings)
-3. W panelu Hotjar sprawdź instalację na **kilku różnych ścieżkach**, nie tylko `/login`
-4. Sprawdź też:
-   - **Recordings** — czy pojawiają się nagrania sesji
-   - **Heatmaps** — po zebraniu wystarczającej liczby kliknięć
-
-### 3.5 Screen do dokumentacji
-
-Zrób zrzut z panelu Hotjar (Recordings lub Heatmaps) i podmień:
-
-```text
-docs/screenshots/hotjar.png
-```
+1. Wdróż aplikację na publiczny adres HTTPS.
+2. Otwórz `/login`, zaloguj się i przejdź przez menu (Dashboard, Contracts, Settings).
+3. W panelu Hotjar sprawdź:
+   - **Recordings** — nagrania sesji użytkowników
+   - **Heatmaps** — mapy kliknięć (po zebraniu wystarczającej liczby interakcji)
 
 ---
 
-## Krok 4 — Deploy na Railway
+## 7. Wdrożenie na Railway
 
-### 4.1 Przygotuj repozytorium
+### 7.1 Wypchnięcie kodu do repozytorium
 
-Upewnij się, że branch z kodem jest wypushowany na GitHub/GitLab:
+Upewnij się, że branch z aktualnym kodem jest dostępny na GitHub:
 
 ```bash
-git push -u origin new-requirements
+git push -u origin <nazwa-brancha>
 ```
 
-### 4.2 Utwórz projekt Railway
+### 7.2 Utworzenie projektu Railway
 
-1. Wejdź na [Railway](https://railway.com/)
-2. **New Project → Deploy from GitHub repo**
-3. Wybierz repozytorium `api-manager`
-4. Wybierz branch (np. `new-requirements`)
+1. Otwórz [Railway](https://railway.com/).
+2. Wybierz **New Project → Deploy from GitHub repo**.
+3. Wskaż repozytorium `api-manager` i branch do wdrożenia.
 
-Railway odczyta `railway.json`:
+Railway odczytuje konfigurację z `railway.json`:
 
-- **Build:** `npm run build`
-- **Start:** `npm run start` (serwuje folder `dist/`)
+| Etap | Polecenie |
+|------|-----------|
+| Build | `npm run build` |
+| Start | `npm run start` (serwowanie `dist/` w trybie SPA) |
 
-### 4.3 Ustaw zmienne środowiskowe
+### 7.3 Zmienne środowiskowe
 
-W Railway: **Project → Service → Variables** — dodaj **wszystkie** zmienne z `.env`:
+W **Project → Service → Variables** ustaw wszystkie zmienne z `.env.example`:
 
 ```env
 VITE_FIREBASE_API_KEY=
@@ -231,145 +300,40 @@ VITE_HOTJAR_SITE_ID=
 VITE_HOTJAR_VERSION=6
 ```
 
-> **Ważne:** Vite wstawia zmienne `VITE_*` w czasie **buildu**. Po każdej zmianie zmiennych w Railway uruchom **Redeploy**.
+Po każdej zmianie zmiennych uruchom **Redeploy**.
 
-### 4.4 Wygeneruj publiczny URL
+### 7.4 Publiczny adres URL
 
-1. **Settings → Networking → Generate Domain**
-2. Skopiuj URL, np. `https://api-manager-production-0456.up.railway.app/settings`
+1. Przejdź do **Settings → Networking → Generate Domain**.
+2. Skopiuj wygenerowany adres (np. `https://api-manager-production-0456.up.railway.app`).
 
-### 4.5 Dokończ konfigurację po deployu
+### 7.5 Konfiguracja po wdrożeniu
 
-| Usługa | Co zrobić po otrzymaniu URL Railway |
-|--------|-------------------------------------|
+| Usługa | Wymagana czynność |
+|--------|-------------------|
 | Firebase | Dodaj domenę Railway w **Authorized domains** |
-| Google Analytics | Dodaj URL w strumieniu danych Web (lub utwórz osobny) |
+| Google Analytics | Zaktualizuj lub dodaj strumień danych Web z adresem Railway |
 | Hotjar | Ustaw URL witryny na domenę Railway |
 
-### 4.6 Weryfikacja deployu
+### 7.6 Weryfikacja wdrożenia
 
-1. Otwórz publiczny URL Railway
-2. Zaloguj się przez Firebase
-3. Przeklikaj podstrony
-4. Sprawdź GA4 Realtime i panel Hotjar (może zająć kilka minut)
+1. Otwórz publiczny adres Railway.
+2. Zaloguj się przez Firebase Authentication.
+3. Przejdź przez główne trasy aplikacji.
+4. Sprawdź dane w GA4 (**Realtime**) i panelu Hotjar (dane mogą pojawić się z opóźnieniem kilku minut).
 
-### 4.7 Screen deployu do dokumentacji
+### 7.7 Wersja Node.js na Railway
 
-Opcjonalnie dodaj screen z Railway (widok działającego deploymentu) do README.
-
----
-
-## Krok 5 — Checklist końcowy
-
-Użyj tej listy przed oddaniem projektu:
-
-- [ ] Plik `.env` lokalnie uzupełniony i działa `npm run dev`
-- [ ] Logowanie przez Firebase (nie mock) — email/hasło z konsoli lub rejestracja
-- [ ] Wylogowanie działa i chronione trasy przekierowują na `/login`
-- [ ] `VITE_GA_MEASUREMENT_ID` ustawione — widać ruch w GA4 Realtime
-- [ ] `VITE_HOTJAR_SITE_ID` ustawione — widać sesje/nagrania w Hotjar
-- [ ] Aplikacja wdrożona na Railway z publicznym URL
-- [ ] Domena Railway dodana w Firebase Authorized domains
-- [ ] `npm run build` przechodzi lokalnie
-- [ ] `npm test` przechodzi lokalnie
-- [ ] README zawiera screeny aplikacji (`docs/screenshots/`)
-- [ ] README zawiera **prawdziwe** screeny GA i Hotjar (nie mocki)
-
----
-
-## Typowe problemy
-
-### Logowanie działa lokalnie, ale nie na Railway
-
-- Sprawdź **Authorized domains** w Firebase — dodaj domenę `*.up.railway.app`
-- Sprawdź, czy zmienne `VITE_FIREBASE_*` są ustawione w Railway **przed** buildem
-- Zrób **Redeploy** po dodaniu zmiennych
-
-### GA4 nie pokazuje pageview
-
-- Upewnij się, że `VITE_GA_MEASUREMENT_ID` jest ustawione przed buildem
-- Przeklikaj strony — SPA wymaga `AnalyticsListener` (już jest w kodzie)
-- Sprawdź zakładkę **Realtime**, nie History (dane historyczne mogą mieć opóźnienie)
-
-### Hotjar nie nagrywa sesji
-
-- Hotjar wymaga publicznego URL — localhost często nie wystarcza
-- Sprawdź, czy `VITE_HOTJAR_SITE_ID` to liczba (bez cudzysłowów w Railway)
-- Wyłącz adblocker podczas testów
-- Poczekaj kilka minut po pierwszej wizycie
-
-### Hotjar działa tylko na `/login`, błąd na innych podstronach
-
-- To typowy problem SPA — Hotjar widzi tylko pierwszy URL bez `stateChange`
-- Kod wysyła `Hotjar.stateChange()` przy każdej zmianie trasy w `AnalyticsListener`
-- W Hotjar Site settings włącz **Track changes manually**
-- Po deployu przetestuj: `/login` → zaloguj → `/contracts` → `/settings` i zweryfikuj każdą ścieżkę osobno
-
-### Railway — biała strona lub 404 na podstronach
-
-- Używamy `serve -s` (SPA mode) — plik `package.json` ma `"start": "serve dist -s -l ${PORT:-4173}"`
-- Upewnij się, że build zakończył się sukcesem w logach Railway
-
-### Build Railway pada na zmiennych
-
-- Wszystkie `VITE_*` muszą być ustawione w Variables przed deployem
-- Po zmianie zmiennych zawsze uruchom ponowny deploy
-
-### Build Railway pada na wersji Node.js (`Vite requires Node.js version 20.19+`)
-
-Railway/Nixpacks domyślnie używa Node 18. Projekt wymaga **Node >= 20.19** (Vite).
-
-W repozytorium są już pliki wymuszające Node 22:
+Projekt wymaga Node.js **22.x**. W repozytorium skonfigurowano:
 
 - `.nvmrc` → `22`
 - `engines.node` w `package.json` → `22.x`
 - `nixpacks.toml` → `NIXPACKS_NODE_VERSION = "22"`
 
-Jeśli build nadal używa Node 18, dodaj w Railway **Variables**:
+Jeśli build używa starszej wersji Node, dodaj w Railway Variables:
 
 ```env
 NIXPACKS_NODE_VERSION=22
 ```
 
-i uruchom **Redeploy**.
-
-### Build Railway pada na `undefined variable 'nodejs_24'`
-
-Ten błąd pojawia się, gdy w `nixpacks.toml` jest ustawiony stary `nixpkgsArchive`, a Railway próbuje użyć Node 24. **Nie pinuj archiwum nixpkgs** — wystarczy `NIXPACKS_NODE_VERSION=22`.
-
-Sprawdź też w Railway Variables, czy nie masz przypadkiem `NIXPACKS_NODE_VERSION=24` — usuń lub zmień na `22`.
-
----
-
-## Szybki szablon `.env`
-
-```env
-# Firebase
-VITE_FIREBASE_API_KEY=AIza...
-VITE_FIREBASE_AUTH_DOMAIN=twoj-projekt.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=twoj-projekt
-VITE_FIREBASE_STORAGE_BUCKET=twoj-projekt.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-VITE_FIREBASE_APP_ID=1:123456789:web:abcdef
-
-# Google Analytics 4
-VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-
-# Hotjar
-VITE_HOTJAR_SITE_ID=1234567
-VITE_HOTJAR_VERSION=6
-```
-
----
-
-## Powiązane pliki w repozytorium
-
-| Plik | Rola |
-|------|------|
-| `.env.example` | Szablon zmiennych |
-| `src/lib/firebase.ts` | Inicjalizacja Firebase |
-| `src/services/authService.ts` | Logowanie, rejestracja, wylogowanie |
-| `src/components/AnalyticsListener.tsx` | Pageview przy zmianie trasy |
-| `src/App.tsx` | Inicjalizacja GA4 i Hotjar |
-| `railway.json` | Konfiguracja deployu |
-| `README.md` | Dokumentacja projektu ze screenami |
+i uruchom ponowny deploy.
