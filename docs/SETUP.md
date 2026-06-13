@@ -209,7 +209,7 @@ VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 - Inicjalizacja: `ReactGA.initialize()` w `src/App.tsx`.
 - Przy każdej zmianie trasy React Router komponent `AnalyticsListener` wysyła event `pageview`.
-- Śledzone trasy obejmują m.in.: `/`, `/login`, `/contracts`, `/contracts/new`, `/settings`, `/diff/:contractId/:runId`.
+- Śledzone trasy obejmują m.in.: `/`, `/login`, `/contracts`, `/contracts/new`, `/contracts/:contractId`, `/settings`, `/diff/:contractId/:runId`.
 
 ### 5.5 Weryfikacja
 

@@ -313,17 +313,27 @@ npm run preview:prod
 
 ![Lista kontraktów](docs/screenshots/contracts.png)
 
+### Nowy kontrakt (`/contracts/new`)
+
+![Kreator nowego kontraktu](docs/screenshots/new-contract.png)
+
+### Szczegóły kontraktu (`/contracts/:contractId`)
+
+![Szczegóły kontraktu](docs/screenshots/contract-details.png)
+
+### Diff Viewer (`/diff/:contractId/:runId`)
+
+![Diff Viewer](docs/screenshots/diff-viewer.png)
+
 ### Ustawienia (`/settings`)
 
 ![Ustawienia](docs/screenshots/settings.png)
-
-> Makiety pozostałych ekranów (szczegóły kontraktu, Diff Viewer, kreator): [docs/prototypes/](docs/prototypes/)
 
 ---
 
 ## Google Analytics 4
 
-Po wdrożeniu i skonfigurowaniu `VITE_GA_MEASUREMENT_ID` w panelu GA4 widoczne są pageview ze wszystkich tras React Router (np. `/`, `/login`, `/contracts`, `/settings`).
+Po wdrożeniu i skonfigurowaniu `VITE_GA_MEASUREMENT_ID` w panelu GA4 widoczne są pageview ze wszystkich tras React Router (np. `/`, `/login`, `/contracts`, `/contracts/new`, `/contracts/:contractId`, `/diff/:contractId/:runId`, `/settings`).
 
 ### Raport
 
